@@ -13,3 +13,6 @@ __pycache__/
 .venv/
 .pytest_cache/
 .ipynb_checkpoints/
+
+# generated print HTML (the PDF is committed, the intermediate is not)
+docs/*.html
