@@ -1,6 +1,6 @@
-# data and artifacts never belong in git
-data/
-outputs/
+# data and artifacts never belong in git (anchored: src/data/ is source code)
+/data/
+/outputs/
 *.pt
 *.npz
 *.db
