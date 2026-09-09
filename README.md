@@ -28,6 +28,55 @@ Pipeline: `load -> validate -> orient RAS -> resample -> HU window -> 3D U-Net
 patches -> sliding-window inference -> postprocess -> invert to source geometry
 -> overlay + 3D surface -> human review`.
 
+## Getting a copy running (teammate setup)
+
+Verified from a clean clone: 45 tests pass and `quickstart.py` trains, evaluates
+and segments without any extra files. Nothing but Python is needed - no dataset,
+no GPU, no accounts.
+
+```bash
+git clone https://github.com/adityashuklaa/liver3d
+cd liver3d
+
+python -m venv .venv
+.venv\Scripts\activate            # Windows
+# source .venv/bin/activate         # macOS / Linux
+
+pip install -r requirements.txt     # CPU build of torch is fine
+pytest -q                           # 45 tests, ~15 s
+python scripts/quickstart.py        # synthetic data -> train -> evaluate -> segment
+```
+
+Then open the review workstation:
+
+```bash
+python scripts/export_viewer_data.py --checkpoint outputs/demo/best.pt --out outputs/viewer
+python -m http.server 8099          # then open http://127.0.0.1:8099/viewer.html
+```
+
+For the upload tab, start the service in a second terminal:
+
+```bash
+set LIVER3D_CHECKPOINT=outputs/demo/best.pt        # export ... on macOS/Linux
+set LIVER3D_API_KEYS=demo-key:clinician
+set LIVER3D_CORS_ORIGINS=http://127.0.0.1:8099,null
+uvicorn src.api.service:app --port 8000
+```
+
+Notes for a fresh machine:
+
+| Situation | What to do |
+|---|---|
+| NVIDIA GPU available | install the CUDA build of torch first from pytorch.org, then `pip install -r requirements.txt`; training picks the GPU up automatically |
+| Python version | 3.10-3.12. `python --version` before creating the venv |
+| Windows | keep `training.num_workers: 0` in the config; the dataloader workers are slower there, not faster |
+| Ports already used | `--port` on the http server and uvicorn; update the endpoint field in the viewer's Upload tab to match |
+| `viewer.html` opened by double-click | works for review, but the browser blocks its calls to the local service - serve it over http for uploads |
+| No `outputs/demo/best.pt` yet | run `python scripts/quickstart.py` first; it produces the checkpoint everything else refers to |
+
+Anyone with a real dataset continues at [Real dataset](#real-dataset-lits--chaos--your-own) - the
+commands are unchanged, only `configs/baseline.yaml` points somewhere else.
+
 ## Install
 
 ```bash
