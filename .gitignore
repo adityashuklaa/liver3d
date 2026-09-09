@@ -1,0 +1,15 @@
+# data and artifacts never belong in git
+data/
+outputs/
+*.pt
+*.npz
+*.db
+*.nii
+*.nii.gz
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ipynb_checkpoints/

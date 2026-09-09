@@ -1,0 +1,71 @@
+# Baseline configuration for a real dataset (LiTS / CHAOS style).
+# Every value here is a documented starting point, not a validated setting.
+# Confirm spacing, window and patch size against your dataset statistics and
+# GPU memory before reporting any result.
+project: liver_3d_unet
+seed: 42
+
+data:
+  root: data/lits                     # dataset root (imagesTr/labelsTr or volume-*/segmentation-*)
+  dataset: TO_CONFIRM                 # record the exact dataset name, version and license
+  split_manifest: data_manifests/split_v1.csv
+  cache_dir: data/cache
+  orientation: RAS
+  spacing_mm: [1.5, 1.5, 2.0]
+  intensity_window_hu: [-200.0, 250.0]
+  patch_size: [96, 96, 96]
+  merge_labels_above_zero: true       # LiTS label 2 (tumour) counts as liver
+  spacing_valid_range_mm: [0.4, 6.0]
+  min_liver_volume_ml: 100.0
+  max_liver_volume_ml: 4000.0
+
+augment:
+  flip_prob: 0.5
+  intensity_shift: 0.1
+  intensity_scale: 0.1
+  noise_std: 0.02
+
+sampling:
+  pos_ratio: 0.7                      # fraction of patches centred on liver voxels
+  patches_per_volume: 4
+
+model:
+  architecture: unet3d
+  in_channels: 1
+  channels: [32, 64, 128, 256]
+  out_channels: 1
+  norm: instance
+  activation: leakyrelu
+  dropout: 0.0
+
+training:
+  loss: dice_bce
+  dice_weight: 1.0
+  bce_weight: 1.0
+  optimizer: adam
+  learning_rate: 0.0001
+  weight_decay: 0.0
+  batch_size: 2
+  max_epochs: 300
+  iters_per_epoch: 100
+  early_stopping_patience: 40
+  amp: true
+  num_workers: 0                      # raise on Linux; keep 0 on Windows
+  val_interval: 1
+  checkpoint_metric: dice
+
+inference:
+  roi_size: [96, 96, 96]
+  overlap: 0.5
+  blend: gaussian
+  sw_batch_size: 2
+  threshold: 0.5                      # tune on validation only, then lock
+  largest_component: true
+  fill_holes: true
+  min_component_ml: 10.0
+
+outputs:
+  dir: outputs
+  save_probability_map: true
+  restore_original_geometry: true
+  save_overlays: true

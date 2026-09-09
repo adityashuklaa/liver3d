@@ -1,0 +1,69 @@
+# Fast CPU-runnable demo on synthetic phantoms.
+# Purpose: prove the pipeline runs end to end. The numbers it produces say
+# nothing about clinical performance.
+project: liver_3d_unet_demo
+seed: 42
+
+data:
+  root: data/synthetic
+  dataset: synthetic_phantoms_v1
+  split_manifest: data_manifests/synthetic_split.csv
+  cache_dir: data/cache
+  orientation: RAS
+  spacing_mm: [3.0, 3.0, 3.0]
+  intensity_window_hu: [-200.0, 250.0]
+  patch_size: [48, 48, 48]
+  merge_labels_above_zero: true
+  spacing_valid_range_mm: [0.4, 8.0]
+  min_liver_volume_ml: 50.0
+  max_liver_volume_ml: 4000.0
+
+augment:
+  flip_prob: 0.5
+  intensity_shift: 0.1
+  intensity_scale: 0.1
+  noise_std: 0.02
+
+sampling:
+  pos_ratio: 0.8
+  patches_per_volume: 4
+
+model:
+  architecture: unet3d
+  in_channels: 1
+  channels: [8, 16, 32]
+  out_channels: 1
+  norm: instance
+  activation: leakyrelu
+  dropout: 0.0
+
+training:
+  loss: dice_bce
+  dice_weight: 1.0
+  bce_weight: 1.0
+  optimizer: adam
+  learning_rate: 0.001
+  batch_size: 2
+  max_epochs: 12
+  iters_per_epoch: 20
+  early_stopping_patience: 8
+  amp: false
+  num_workers: 0
+  val_interval: 1
+  checkpoint_metric: dice
+
+inference:
+  roi_size: [48, 48, 48]
+  overlap: 0.5
+  blend: gaussian
+  sw_batch_size: 2
+  threshold: 0.5
+  largest_component: true
+  fill_holes: true
+  min_component_ml: 5.0
+
+outputs:
+  dir: outputs
+  save_probability_map: true
+  restore_original_geometry: true
+  save_overlays: true

@@ -1,0 +1,9 @@
+case_id,patient_id,split,image,label
+synth_000,synth_000,val,C:\Users\DELL\Desktop\BS riz\liver3d\data\synthetic\imagesTr\synth_000.nii.gz,C:\Users\DELL\Desktop\BS riz\liver3d\data\synthetic\labelsTr\synth_000.nii.gz
+synth_001,synth_001,test,C:\Users\DELL\Desktop\BS riz\liver3d\data\synthetic\imagesTr\synth_001.nii.gz,C:\Users\DELL\Desktop\BS riz\liver3d\data\synthetic\labelsTr\synth_001.nii.gz
+synth_002,synth_002,train,C:\Users\DELL\Desktop\BS riz\liver3d\data\synthetic\imagesTr\synth_002.nii.gz,C:\Users\DELL\Desktop\BS riz\liver3d\data\synthetic\labelsTr\synth_002.nii.gz
+synth_003,synth_003,train,C:\Users\DELL\Desktop\BS riz\liver3d\data\synthetic\imagesTr\synth_003.nii.gz,C:\Users\DELL\Desktop\BS riz\liver3d\data\synthetic\labelsTr\synth_003.nii.gz
+synth_004,synth_004,train,C:\Users\DELL\Desktop\BS riz\liver3d\data\synthetic\imagesTr\synth_004.nii.gz,C:\Users\DELL\Desktop\BS riz\liver3d\data\synthetic\labelsTr\synth_004.nii.gz
+synth_005,synth_005,val,C:\Users\DELL\Desktop\BS riz\liver3d\data\synthetic\imagesTr\synth_005.nii.gz,C:\Users\DELL\Desktop\BS riz\liver3d\data\synthetic\labelsTr\synth_005.nii.gz
+synth_006,synth_006,train,C:\Users\DELL\Desktop\BS riz\liver3d\data\synthetic\imagesTr\synth_006.nii.gz,C:\Users\DELL\Desktop\BS riz\liver3d\data\synthetic\labelsTr\synth_006.nii.gz
+synth_007,synth_007,train,C:\Users\DELL\Desktop\BS riz\liver3d\data\synthetic\imagesTr\synth_007.nii.gz,C:\Users\DELL\Desktop\BS riz\liver3d\data\synthetic\labelsTr\synth_007.nii.gz
