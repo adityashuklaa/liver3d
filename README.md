@@ -22,13 +22,16 @@ quality and regulatory approval.
 | Single-volume inference | `python -m src.infer` | mask + probability + audit JSON |
 | Service | `uvicorn src.api.service:app` | REST API with roles, audit, review |
 | Tests | `pytest` | 45 unit / integration / contract tests |
-| Review workstation | `scripts/export_viewer_data.py` -> `viewer.html` | offline reviewer UI over the exported masks |
+| Review workstation | `scripts/export_viewer_data.py` + `scripts/build_viewer.py` | `viewer.html`, an offline reviewer UI over your own run |
 
 Pipeline: `load -> validate -> orient RAS -> resample -> HU window -> 3D U-Net
 patches -> sliding-window inference -> postprocess -> invert to source geometry
 -> overlay + 3D surface -> human review`.
 
 ## Getting a copy running (teammate setup)
+
+Step-by-step version with expected output at each stage, per-shell commands and a
+troubleshooting table: **[docs/SETUP.md](docs/SETUP.md)**. Short version below.
 
 Verified from a clean clone: 45 tests pass and `quickstart.py` trains, evaluates
 and segments without any extra files. Nothing but Python is needed - no dataset,
@@ -134,9 +137,10 @@ Writes `<job>_mask.nii.gz` (source geometry), `<job>_prob.nii.gz`,
 
 ```bash
 python scripts/export_viewer_data.py --checkpoint outputs/demo/best.pt --out outputs/viewer
+python scripts/build_viewer.py --data outputs/viewer --run outputs/demo --out viewer.html
 ```
 
-Exports slice sprites, masks, per-slice Dice, metrics and a decimated surface for
+The first command exports slice sprites, masks, per-slice Dice, metrics and a decimated surface for
 every case, then `viewer.html` reads them: worklist with quality bands, slice
 scrubbing with cine, five view modes (overlay, prediction, reference, difference,
 CT only), per-slice plot, rotatable 3D mask, training curves, service transcript,
@@ -223,7 +227,8 @@ dataset with a locked split. See `docs/validation_report_template.md`.
 ```
 configs/           versioned run configuration (baseline + CPU demo)
 data_manifests/    locked patient-level splits and split metadata
-scripts/           synthetic data, manifest builder, quickstart
+scripts/           synthetic data, manifest builder, quickstart, viewer export and build
+web/               viewer template and app source (built into viewer.html)
 src/config.py      config loading, merging, hashing
 src/data/          io, preprocessing (invertible), validation, split, dataset, phantoms
 src/models/        3D U-Net
